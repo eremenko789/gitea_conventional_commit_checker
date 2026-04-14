@@ -1,0 +1,48 @@
+# Copy to config.yaml and adjust. See README for template fields and Gitea token scopes.
+
+server:
+  listen: ":8080"
+  webhook_secret: "change-me" # HMAC secret configured in Gitea webhook; empty disables verification (insecure)
+  queue_size: 100
+  workers: 4
+  gitea_timeout: 30s
+
+gitea:
+  base_url: "https://gitea.example.com"
+  token: "gitea_pat_token"
+
+check:
+  context: "conventional-commits"
+  # Optional Go text/template for a link shown in Gitea (e.g. PR URL). Available fields: .PRNumber .PRTitle .RepoFullName .Owner .Repo
+  target_url_template: ""
+
+  description_success: "Все коммиты PR соответствуют Conventional Commits."
+  # {{ .InvalidCommits }} is a newline-separated "shortSHA: subject" list; you can also range over .InvalidCommitsList
+  description_failure: "Есть коммиты вне конвенции: {{ .InvalidCommits }}"
+  # Optional pending text while listing commits (same template fields as success, without invalid commits)
+  description_pending: ""
+
+  # Post the same rendered summary as an issue/PR comment (requires API token scope for issues).
+  # Set pr_comment_enabled: false to disable. Templates: Go text/template; extra fields: .HeadSHA .HeadShortSHA .InvalidCommitsMarkdown
+  # pr_comment_enabled: true
+  # pr_comment_success: "..."
+  # pr_comment_failure: "..."
+  # pr_comment_max_runes: 65535
+
+  # When true, post the same status to every commit SHA in the PR (in addition to HEAD)
+  status_on_each_commit: false
+
+  allowed_types: [] # empty = default CC types (feat, fix, docs, ...)
+
+  # When omitted, merge/revert-style subjects are skipped from validation (recommended)
+  skip_merge_commits: true
+
+  description_max_runes: 4096
+  http_retries: 3
+  http_retry_base_delay: 300ms
+
+repositories:
+  - name: "org/repo"
+    # Optional per-repo overrides, e.g.:
+    # check:
+    #   context: "org-repo-conventional"

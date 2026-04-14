@@ -1,0 +1,6 @@
+/bin/
+/coverage.out
+/config.yaml
+*.exe
+TZ.md
+test.sh
