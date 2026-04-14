@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -14,10 +15,24 @@ import (
 	"github.com/eremenko789/gitea_conventional_commit_checker/internal/server"
 )
 
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+)
+
 func main() {
+	var showVersion bool
 	configPath := flag.String("config", "config.yaml", "path to YAML configuration")
 	debug := flag.Bool("debug", false, "log incoming webhook payloads and outgoing Gitea HTTP (debug level)")
+	flag.BoolVar(&showVersion, "version", false, "print version and exit")
+	flag.BoolVar(&showVersion, "v", false, "print version and exit (shorthand)")
 	flag.Parse()
+
+	if showVersion {
+		fmt.Printf("webhook-service version=%s commit=%s date=%s\n", version, commit, date)
+		os.Exit(0)
+	}
 
 	cfg, err := config.Load(*configPath)
 	if err != nil {

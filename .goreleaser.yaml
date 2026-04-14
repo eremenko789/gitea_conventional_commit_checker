@@ -1,0 +1,38 @@
+version: 2
+
+project_name: gitea-conventional-commit-checker
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: webhook-service
+    main: ./cmd/webhook-service
+    binary: webhook-service
+    goos: [linux, darwin, windows]
+    goarch: [amd64, arm64]
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
+
+archives:
+  - id: default
+    format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        format: zip
+
+checksum:
+  name_template: checksums.txt
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
