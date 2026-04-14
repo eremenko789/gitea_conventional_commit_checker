@@ -1,0 +1,2 @@
+# gitea_conventional_commit_checker
+Микросервис проверяющий соответствие содержимого ПР Conventional Commit
